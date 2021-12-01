@@ -12,6 +12,7 @@ from morecantile import TileMatrixSet
 from rio_tiler.io import BaseReader, COGReader, MultiBandReader, MultiBaseReader
 from rio_tiler.models import BandStatistics, Bounds, Info
 from rio_tiler.utils import get_array_statistics
+import os
 
 from titiler.core.dependencies import (
     AssetsBidxExprParams,
@@ -172,7 +173,7 @@ class BaseTilerFactory(metaclass=abc.ABCMeta):
     def url_for(self, request: Request, name: str, **path_params: Any) -> str:
         """Return full url (with prefix) for a specific endpoint."""
         url_path = self.router.url_path_for(name, **path_params)
-        base_url = str(request.base_url)
+        base_url = os.getenv("TITILER_BASE_URL") or str(request.base_url)
         if self.router_prefix:
             base_url += self.router_prefix.lstrip("/")
         return url_path.make_absolute_url(base_url=base_url)
@@ -1384,7 +1385,7 @@ class TMSFactory:
     def url_for(self, request: Request, name: str, **path_params: Any) -> str:
         """Return full url (with prefix) for a specific endpoint."""
         url_path = self.router.url_path_for(name, **path_params)
-        base_url = str(request.base_url)
+        base_url = os.getenv("TITILER_BASE_URL") or str(request.base_url)
         if self.router_prefix:
             base_url += self.router_prefix.lstrip("/")
         return url_path.make_absolute_url(base_url=base_url)
